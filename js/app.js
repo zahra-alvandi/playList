@@ -121,8 +121,128 @@ const musics = [
     },
 ];
 
+const playLists = [];
+
+// function addToPlayList(musicId) {
+//     const mainMusic = musics.find(function (musicObj) {
+//         return musicObj.id = musicId
+//     })
+//     playLists.push(mainMusic)
+//     showPlayList();
+// }
+
+// function showPlayList() {
+//     const playListContainer = document.querySelector(".playlist")
+//     playLists.forEach(function (music) {
+//         playListContainer.insertAdjacentHTML("beforeend",
+//             `<article class="music-card">
+//         <header>
+//           <img src="${music.cover}" alt="کاور موزیک" />
+//           <div class="play-music">
+//             <button class="play-music-btn play-btn" data-src="${music.src}">
+//               <i class="fa-solid fa-play"></i>
+//             </button>
+//           </div>
+//         </header>
+//         <main>
+//           <p>${music.title}</p>
+//         </main>
+//         <footer>
+//           <button class="bookmark" onclick="addToPlayList(${music.id})>
+//             <i class="fa-regular fa-bookmark"></i>
+//           </button>
+//         </footer>
+//       </article>`
+//         )
+//     })
+// }
+
+// function showMusics() {
+//     const musicsContainer = document.querySelector(".musics-container");
+
+//     musics.forEach(function (musicObj) {
+//         musicsContainer.insertAdjacentHTML(
+//             "beforeend",
+//             `
+//       <article class="music-card">
+//         <header>
+//           <img src="${musicObj.cover}" alt="کاور موزیک" />
+//           <div class="play-music">
+//             <button class="play-music-btn play-btn" data-src="${musicObj.src}">
+//               <i class="fa-solid fa-play"></i>
+//             </button>
+//           </div>
+//         </header>
+//         <main>
+//           <p>${musicObj.title}</p>
+//         </main>
+//         <footer>
+//           <button class="bookmark" onclick="addToPlayList(${musicObj.id})>
+//             <i class="fa-regular fa-bookmark"></i>
+//           </button>
+//         </footer>
+//       </article>
+//       `
+//         );
+//     });
+
+//     const playBtns = document.querySelectorAll(".play-btn");
+//     const music = document.querySelector("audio");
+//     const playIcon = document.querySelector(".play-icon");
+//     const playButton = document.querySelector(".play-button");
+//     const volumeCard = document.querySelector(".volume-card");
+//     const volume = document.querySelector(".volume");
+
+//     playBtns.forEach(function (playBtn) {
+//         playBtn.addEventListener("click", function (event) {
+//             const mainMusicSrc = event.target.dataset.src;
+//             music.setAttribute("src", mainMusicSrc);
+//             music.play();
+
+//             if (playIcon.className.includes("fa-play")) {
+//                 playIcon.classList.remove("fa-play");
+//                 playIcon.classList.add("fa-pause");
+//             }
+
+//             playBtns.forEach(function (playBtn) {
+//                 const playOrPauseIcon = playBtn.querySelector("i");
+//                 playOrPauseIcon.classList.remove("fa-pause");
+//                 playOrPauseIcon.classList.add("fa-play");
+//             });
+
+//             const playOrPauseIcon = playBtn.querySelector("i");
+//             playOrPauseIcon.classList.remove("fa-play");
+//             playOrPauseIcon.classList.add("fa-pause");
+//         });
+//     });
+
+//     playButton.addEventListener("click", function () {
+//         if (playIcon.className.includes("fa-play")) {
+//             music.play();
+//             playIcon.classList.remove("fa-play");
+//             playIcon.classList.add("fa-pause");
+//         } else {
+//             music.pause();
+//             playIcon.classList.remove("fa-pause");
+//             playIcon.classList.add("fa-play");
+//         }
+
+//         const musicPauseIcon = document.querySelector(".play-btn .fa-pause");
+//         if (musicPauseIcon) {
+//             musicPauseIcon.classList.remove("fa-pause");
+//             musicPauseIcon.classList.add("fa-play");
+//         }
+//     });
+
+//     volumeCard.addEventListener("click", function (event) {
+//         music.volume = event.offsetX / 100;
+//         volume.style.width = `${event.offsetX}px`;
+//     });
+// }
+
 function showMusics() {
     const musicsContainer = document.querySelector(".musics-container");
+    musicsContainer.innerHTML = "";
 
     musics.forEach(function (musicObj) {
         musicsContainer.insertAdjacentHTML(
@@ -141,7 +261,7 @@ function showMusics() {
           <p>${musicObj.title}</p>
         </main>
         <footer>
-          <button class="bookmark">
+          <button class="bookmark ${musicObj.isInPlayList ? "bookmarked" : ""}" onclick="addToPlayList(${musicObj.id})">
             <i class="fa-regular fa-bookmark"></i>
           </button>
         </footer>
@@ -202,4 +322,54 @@ function showMusics() {
         music.volume = event.offsetX / 100;
         volume.style.width = `${event.offsetX}px`;
     });
+}
+
+function addToPlayList(musicId) {
+    const isInPlayList = playLists.some(function (music) {
+        return music.id === musicId
+    });
+
+    if (!isInPlayList) {
+        const mainMusic = musics.find(function (musicObj) {
+            return musicObj.id === musicId;
+        })
+
+        playLists.push(mainMusic)
+
+        musics.forEach(function (music) {
+            if (music.id === musicId) {
+                music.isInPlayList = true;
+            }
+        });
+        showPlayList();
+        showMusics();
+    }
+
+}
+
+function showPlayList() {
+    const playListContainer = document.querySelector(".playlist")
+    playListContainer.innerHTML = "";
+    playLists.forEach(function (music) {
+        playListContainer.insertAdjacentHTML("beforeend",
+            ` <article class="music-card">
+        <header>
+          <img src="${music.cover}" alt="کاور موزیک" />
+          <div class="play-music">
+            <button class="play-music-btn play-btn" data-src="${music.src}">
+              <i class="fa-solid fa-play"></i>
+            </button>
+          </div>
+        </header>
+        <main>
+          <p>${music.title}</p>
+        </main>
+        <footer>
+          <button class="bookmark" onclick="addToPlayList(${music.id})">
+            <i class="fa-regular fa-bookmark"></i>
+          </button>
+        </footer>
+      </article>`
+        )
+    })
 }
